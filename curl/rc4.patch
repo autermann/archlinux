@@ -1,0 +1,11 @@
+--- a/lib/vtls/openssl.h	2014-03-21 23:46:24.504247360 +0100
++++ b/lib/vtls/openssl.h	2014-03-21 23:47:00.634477229 +0100
+@@ -95,7 +95,7 @@
+ #define curlssl_random(x,y,z) Curl_ossl_random(x,y,z)
+ #define curlssl_md5sum(a,b,c,d) Curl_ossl_md5sum(a,b,c,d)
+ 
+-#define DEFAULT_CIPHER_SELECTION "ALL!EXPORT!EXPORT40!EXPORT56!aNULL!LOW!RC4"
++#define DEFAULT_CIPHER_SELECTION "ALL!EXPORT!EXPORT40!EXPORT56!aNULL!LOW"
+ 
+ #endif /* USE_SSLEAY */
+ #endif /* HEADER_CURL_SSLUSE_H */
