@@ -4,7 +4,7 @@
 
 pkgname=autorandr-git
 _gitname=autorandr
-pkgver=r40.8c6bfe5
+pkgver=r43.68c17d2
 pkgrel=1
 pkgdesc="Auto-detect connected display hardware and load appropriate X11 setup using xrandr."
 url="http://github.com/autermann/autorandr"
