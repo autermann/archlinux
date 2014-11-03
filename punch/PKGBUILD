@@ -1,0 +1,25 @@
+pkgname=punch
+_pkgname="punch-time-tracking"
+pkgver=1.3
+pkgrel=1
+pkgdesc="Command Line time tracking that integrates with todo.txt from Lifehacker"
+url="http://code.google.com/p/punch-time-tracking/"
+arch=('any')
+license=('GPL3')
+depends=('python2' 'todo')
+makedepends=('unzip')
+source=("http://punch-time-tracking.googlecode.com/files/${_pkgname}-${pkgver}.zip")
+md5sums=('7fc124dc4f0faddff364bacc61259647')
+
+prepare() {
+	cd "${srcdir}"
+	unzip -o "${_pkgname}-${pkgver}.zip"
+	tr -d '\r' < "Punch.py" >  Punch.tmp && mv Punch.tmp Punch.py
+    sed -i '1i #!/usr/bin/env python2' Punch.py
+}
+
+package() {
+    cd "${srcdir}"
+    install -D -m755 Punch.py "${pkgdir}/usr/bin/punch"
+}
+

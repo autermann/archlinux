@@ -1,0 +1,11 @@
+--- todo_completion	2013-12-06 09:49:34.000000000 +0100
++++ todo_completion2	2014-07-27 14:52:16.676052250 +0200
+@@ -83,7 +83,7 @@
+     COMPREPLY=( $( compgen -W "$completions" -- $cur ))
+     return 0
+ }
+-complete -F _todo todo.sh
++complete -F _todo todo
+ 
+ # If you define an alias (e.g. "t") to todo.sh, you need to explicitly enable
+ # completion for it, too:

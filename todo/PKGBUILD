@@ -1,0 +1,26 @@
+pkgname=todo
+_pkgname='todo.txt_cli'
+pkgver=2.10
+pkgrel=1
+pkgdesc="lifehacker.com's todo.sh script for maintaining a todo.txt file"
+url='http://ginatrapani.github.com/todo.txt-cli/'
+arch=('any')
+license=('GPL')
+source=("https://github.com/ginatrapani/todo.txt-cli/releases/download/v${pkgver}/$_pkgname-${pkgver}.tar.gz"
+		'executable.patch')
+md5sums=('d90098b5f031d117faf129a4c90e812d'
+         '105934903c2fae1e76ebde18919a5d4c')
+
+prepare() {
+	cd "${srcdir}/${_pkgname}-${pkgver}"
+	patch -Np0 < "${srcdir}/executable.patch"
+}
+
+package() {
+  cd "${srcdir}/${_pkgname}-${pkgver}"
+  install -D -m644 todo.cfg "${pkgdir}/usr/share/${pkgname}/todo.cfg"
+  install -D -m755 todo.sh "${pkgdir}/usr/bin/todo"
+
+  install -d "${pkgdir}/usr/share/bash-completion/completions/"
+  install -D -m644 todo_completion "${pkgdir}/usr/share/bash-completion/completions/todo"
+}
