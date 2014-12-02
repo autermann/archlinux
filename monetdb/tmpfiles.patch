@@ -1,0 +1,9 @@
+diff --git buildtools/conf/monetdbd.conf buildtools/conf/monetdbd.conf
+index 6f41ca7..720f585 100644
+--- buildtools/conf/monetdbd.conf
++++ buildtools/conf/monetdbd.conf
+@@ -1,3 +1,4 @@
+ # this file is for systemd
+ # monetdbd needs a directory in /var/run that is owned by monetdb:monetdb
+ d /run/monetdb 0775 monetdb monetdb -
++d /var/lib/monetdb 0775 monetdb monetdb -

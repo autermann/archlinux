@@ -1,0 +1,24 @@
+
+
+post_install() {
+
+  if ! getent group monetdb >/dev/null; then
+    groupadd -g 155 monetdb
+  fi
+  if ! getent passwd monetdb >/dev/null; then
+    useradd -c 'MonetDB user' -u 155 -g monetdb -d /var/lib/monetdb -s /bin/nologin monetdb
+    passwd -l monetdb >/dev/null
+  fi
+
+  monetdbd create /var/lib/monetdb
+  chown -R monetdb:monetdb /var/lib/monetdb
+}
+
+post_remove() {
+  if getent passwd monetdb >/dev/null; then
+    userdel monetdb
+  fi
+  if getent group monetdb >/dev/null; then
+    groupdel monetdb
+  fi
+}

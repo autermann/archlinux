@@ -1,0 +1,16 @@
+[Unit]
+Description=MonetDB Server
+After=network.target
+
+[Service]
+Type=forking
+User=monetdb
+Group=monetdb
+PIDFile=/var/lib/monetdb/merovingian.pid
+ExecStart=/usr/bin/monetdbd start /var/lib/monetdb
+ExecStop=/usr/bin/monetdbd stop /var/lib/monetdb
+OOMScoreAdjust=-200
+
+[Install]
+WantedBy=multi-user.target
+

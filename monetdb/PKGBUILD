@@ -1,0 +1,49 @@
+# Maintainer: Christian Autermann <christian@autermann.org>
+
+pkgname=monetdb
+pkgver=11.19.7
+pkgrel=1
+pkgdesc="Open-Source Columnar Database System"
+arch=('i686' 'x86_64')
+url="http://www.monetdb.org/"
+license=('custom')
+makedepends=('python' 'apache-ant' 'r')
+install="${pkgname}.install"
+source=("${pkgname}.install"
+        "${pkgname}.service"
+        'tmpfiles.patch'
+        "http://dev.monetdb.org/downloads/sources/archive/MonetDB-${pkgver}.tar.bz2")
+sha1sums=('b136164e387e5a0499c235b696c09990245b514e'
+          'f09ab11af3a66953f085c587c285cd9ecb16902c'
+          '66f3002f0cdb7d7a9a4501ebf3546c7cc167addb'
+          '69d17cb137db854795825ffea81a66677a721344')
+
+prepare() {
+  cd ${srcdir}/MonetDB-${pkgver}
+  patch -Np0 < ../tmpfiles.patch
+}
+
+build() {
+  cd ${srcdir}/MonetDB-${pkgver}
+  # export RHOME=/usr/lib64/R
+  ./configure \
+    --libdir=/usr/lib64 \
+    --prefix=/usr \
+    --sysconfdir=/etc \
+    --localstatedir=/var \
+    --disable-assert \
+    --disable-debug \
+    --disable-testing \
+    --enable-optimize \
+    --enable-rintegration \
+    --enable-geom \
+    --without-rubygem
+  make
+}
+
+package() {
+  cd ${srcdir}/MonetDB-${pkgver}
+  make DESTDIR=${pkgdir} install
+  mkdir -p ${pkgdir}/usr/lib/systemd/system
+  install -m644 ${srcdir}/${pkgname}.service ${pkgdir}/usr/lib/systemd/system
+}
