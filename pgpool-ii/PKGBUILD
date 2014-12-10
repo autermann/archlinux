@@ -9,23 +9,22 @@ depends=('postgresql-libs>=9.3' 'pam')
 arch=('i686' 'x86_64')
 url='http://www.pgpool.net'
 license=(custom)
-
+install=${pkgname}.install
 options=(!libtool)
 replaces=(pgpool)
 #backup=(etc/pgpool/{pgpool,pcp,pool_hba}.conf)
 source=(${pkgname}-${pkgver}.tar.gz::http://www.pgpool.net/download.php?f=${_pkgname}-${pkgver}.tar.gz
         ${pkgname}.service
-        ${pkgname}.tmpfiles.d)
+        ${pkgname}.tmpfiles.d
+        ${pkgname}.install)
 
 build() {
   cd ${_pkgname}-${pkgver}
-
   ./configure --prefix=/usr \
               --sysconfdir=/etc/pgpool \
               --mandir=/usr/share/man \
               --with-pam \
               --with-openssl
-
   make
 }
 
@@ -37,10 +36,11 @@ package_pgpool-ii() {
 
   make DESTDIR=${pkgdir} install
   install -D COPYING ${pkgdir}/usr/share/licenses/${pkgname}/LICENSE
-
   mv ${pkgdir}/usr/share/${_pkgname} ${pkgdir}/usr/share/pgpool
+  install -d ${pkgdir}/var/log/pgpool
 }
 
 sha256sums=('92b0f5d4ce3ab7bdfa18b6c4ff7eff84b5fd9a7104d22ed28da5d1b6726936aa'
             'a6efdba90b7a5583a859e73d64c32256ac4ef4428f6fcc45f31fc385915a7754'
-            '957400e61b0c7793640dcbcafb48a816141654555715149a273b749ba41aee1c')
+            '957400e61b0c7793640dcbcafb48a816141654555715149a273b749ba41aee1c'
+            '7599dc07a5d04b8c50f4759b966ad26a1cff92c7615ec1d7a17ffd25402a1266')

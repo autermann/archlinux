@@ -1,0 +1,9 @@
+
+
+post-install() {
+  systemd-tmpfiles --create
+}
+
+post-upgrade() {
+  systemd-tmpfiles --create
+}
