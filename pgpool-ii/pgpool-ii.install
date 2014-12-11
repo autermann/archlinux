@@ -1,9 +1,9 @@
 
 
-post-install() {
-  systemd-tmpfiles --create
+post_install() {
+  systemd-tmpfiles --create /usr/lib/tmpfiles.d/pgpool.conf
 }
 
-post-upgrade() {
-  systemd-tmpfiles --create
+post_upgrade() {
+  systemd-tmpfiles --create /usr/lib/tmpfiles.d/pgpool.conf
 }
