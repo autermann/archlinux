@@ -2,9 +2,9 @@
 
 pkgname=jetty-runner
 pkgver=9.2.9.v20150224
-pkgrel=1
+pkgrel=2
 pkgdesc='Jetty standalone runner'
-arch=('i686' 'x86_64')
+arch=('any')
 url='http://www.eclipse.org/jetty'
 license=('Apache')
 depends=('java-runtime')
@@ -15,8 +15,7 @@ sha256sums=('ee2257bc2e6b8154580dc9e396663df16c5fa3cbb74b16518e14b00aca130808'
             '0cb0b07d4f0d45f6bc0b0b8af3e75e984d0221a43c2529bbe89771ed53d8ee82')
 
 package() {
-  mkdir -p ${pkgdir}/usr/{bin,share/jetty}
-  install -Dm644 jetty-runner-${pkgver}.jar ${pkgdir}/usr/share/jetty/jetty-runner.jar
-  install -Dm755 jetty.sh ${pkgdir}/usr/bin/jetty
+  mkdir -p "${pkgdir}/usr/{bin,share/jetty}"
+  install -Dm644 "jetty-runner-${pkgver}.jar" "${pkgdir}/usr/share/jetty/jetty-runner.jar"
+  install -Dm755 "jetty.sh" "${pkgdir}/usr/bin/jetty"
 }
-
