@@ -1,0 +1,30 @@
+pkgname=jacorb
+pkgver=3.6
+pkgrel=1
+pkgdesc="The free Java implementation of the OMG's CORBA standard"
+url='http://www.jacorb.org/'
+arch=('any')
+license=('GPL')
+depends=('java-runtime')
+source=("http://www.jacorb.org/releases/${pkgver}/${pkgname}-${pkgver}-binary.zip")
+sha256sums=('9f3558bd90a29050ff9953492d086cc01fb987400df88d2b4eedd27ec2ec16ac')
+
+package() {
+	cd "${srcdir}/${_pkgname}-${pkgver}"
+
+
+	install -d "${pkgdir}/usr/share/doc"
+	install -d "${pkgdir}/opt/${pkgname}"
+	install -d "${pkgdir}/etc/profile.d"
+
+	cat > "${pkgdir}/etc/profile.d/${pkgname}.sh" <<-EOF
+		#!/bin/bash
+		export PATH=\$PATH:/opt/${pkgname}/bin
+	EOF
+
+	cp -r 'bin' 'etc' 'idl' 'lib' "${pkgdir}/opt/${pkgname}"
+	rm -f "${pkgdir}/opt/${pkgname}/bin"/*.bat
+	cp -rT 'doc' "${pkgdir}/usr/share/doc/${pkgname}"
+	cp -r 'demo' "${pkgdir}/usr/share/doc/${pkgname}"
+}
+
