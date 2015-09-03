@@ -1,0 +1,31 @@
+# Maintainer: Your Name <youremail@domain.com>
+pkgname=rasdaman-git
+_gitname=rasdaman
+pkgver=r1302.933ff27
+pkgrel=1
+pkgdesc="raster data manager"
+arch=("x86_64")
+url="http://rasdaman.org/"
+license=('GPL')
+depends=('postgresql' 'openais' 'gdal' 'libtiff' 'libjpeg'  'libpng12' 'netpbm' 'openssl' 'ncurses' 'libedit')
+makedepends=('git' 'doxygen' 'apache-ant' 'java-runtime')
+backup=()
+source=("git://kahlua.eecs.jacobs-university.de/rasdaman.git")
+md5sums=('SKIP')
+
+pkgver() {
+    cd "${srcdir}/${_gitname}"
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+	cd ${srcdir}/${_gitname}
+  	autoreconf -fi
+	./configure
+	make
+}
+
+package() {
+  cd "${srcdir}/${_gitname}"
+  make DESTDIR="${pkgdir}/" install
+}
