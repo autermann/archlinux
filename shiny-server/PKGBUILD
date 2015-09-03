@@ -1,0 +1,65 @@
+# Maintainer: Stephen Martin <stephensrmmartin at gmail dot com>
+pkgname=shiny-server
+pkgver=1.3.0
+pkgrel=2
+pkgdesc="Open-source version of the shiny web development framework server"
+arch=('i686' 'x86_64')
+url="http://www.rstudio.com/products/shiny/"
+license=('AGPL')
+depends=('r')
+makedepends=('git' 'python2' 'cmake' 'r')
+install="${pkgname}.install"
+conflicts="shiny-server-git"
+backup="etc/${pkgname}/${pkgname}.conf"
+source=("${pkgname}-${pkgver}.tar.gz::https://github.com/rstudio/${pkgname}/archive/v${pkgver}.tar.gz"
+        "${pkgname}.service"
+		"${pkgname}.conf"
+        'compression.patch')
+sha256sums=('c79e91c7c025e61b260260c71f52765fd3025a327bc873784baa4f4d5d68aff5'
+            '5ec51abe14bced9ca51b067a5b187dcd9d4870a1a49f8438bc836078ed80d216'
+            'eefc4db3d6e031e93cc457953ede1b7a193fbe2f4cd324bc471b3cabdd5f105e'
+            'f3fbaa2ee4050b5e6ce170b4f48cd9f728ab32ec0cca60d49797a0bd7da24e73')
+
+_gid=187
+_uid=187
+
+prepare() {
+  cd ${pkgname}-${pkgver}
+  #patch -Np0 < ../../compression.patch
+
+  find -type f -exec sed \
+    -e 's|^#!/usr/bin/env python$|&2|' \
+    -e 's|^\(#!/usr/bin/python2\).[45]$|\1|' \
+    -e 's|^#!/usr/bin/python$|&2|' \
+    -e "s|'python'|'python2'|" -i {} \;
+}
+
+build() {
+  cd ${pkgname}-${pkgver}
+  rm -rf tmp && mkdir -p tmp
+  cd tmp
+
+  export PYTHON=`which python2`
+  export _PYTHON=${PYTHON}
+  export PATH="`pwd`/../bin/:${PATH}"
+
+  ln -sf ${PYTHON} ../bin/python
+
+  cmake -DCMAKE_INSTALL_PREFIX=/opt -DPYTHON=${PYTHON} ../
+  make
+
+  mkdir ../build
+  (cd .. && bin/npm --python=${PYTHON} rebuild)
+  (cd .. && ext/node/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js --python=${PYTHON} rebuild)
+}
+
+package() {
+  (cd ${pkgname}-${pkgver}/tmp && make DESTDIR=${pkgdir}/ install)
+  mkdir -p ${pkgdir}/usr/bin
+  ln -s /opt/${pkgname}/bin/${pkgname} ${pkgdir}/usr/bin/${pkgname}
+  install -m 644 -D ${pkgname}.service ${pkgdir}/usr/lib/systemd/system/${pkgname}.service
+  install -m 644 -D ${pkgname}.conf    ${pkgdir}/etc/${pkgname}.conf
+  install -m 755 -o ${_uid} -g ${_gid} -d /srv/shiny /var/{lib,log}/shiny
+}
+
+

@@ -1,0 +1,29 @@
+_home=/srv/shiny
+_gid_name='shiny'
+_gid=187
+_uid_name='shiny'
+_uid=187
+
+post_upgrade() {
+  post_install $1
+}
+
+post_install() {
+  if ! getent group ${_gid_name} >/dev/null 2>&1; then
+    groupadd -g ${_gid} ${_gid_name}
+  fi
+  if ! getent passwd ${_uid_name} >/dev/null 2>&1; then
+    useradd  -u ${_uid} -g ${_gid_name} -d /srv/${_pkgname} -s /bin/false ${_uid_name}
+  fi
+}
+
+
+
+pre_remove() {
+  if getent passwd ${_uid_name} > /dev/null 2>&1; then
+    userdel ${_uid_name}
+  fi
+  if getent group ${_gid_name} > /dev/null 2>&1; then
+    groupdel ${_gid_name}
+  fi
+}

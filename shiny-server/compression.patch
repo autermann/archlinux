@@ -1,0 +1,32 @@
+diff --git lib/main.js lib/main.js
+index 4731e83..ed3226c 100755
+--- lib/main.js
++++ lib/main.js
+@@ -23,6 +23,7 @@ var connect = require('connect');
+ var optimist = require('optimist');
+ var Q = require('q');
+ var _ = require('underscore');
++var compression = require('compression');
+ var connect_util = require('./core/connect-util');
+ var fsutil = require('./core/fsutil');
+ var paths = require('./core/paths');
+@@ -149,6 +150,7 @@ var sockjsHandler = function(req, res){
+ }
+ 
+ var app = connect();
++app.use(compression());
+ app.use(clientSessionMiddleware);
+ app.use(function(req, res, next) {
+   if (!sockjsHandler(req, res))
+diff --git package.json package.json
+index 6485ecd..4dd23af 100644
+--- package.json
++++ package.json
+@@ -33,6 +33,7 @@
+     "client-sessions"   :  "0.4.x",
+     "should"         	:  "1.2.x",
+     "sinon"          	:  "1.7.x",
++    "compression"       :  "1.2.1",
+     "qs"		:  "0.6.x",
+     "split" :   "0.2.x",
+     "graceful-fs" : "2.0.x",
