@@ -1,0 +1,22 @@
+# Maintainer: Christian Autermann <c.autermann@52north.org>
+pkgname=libcsv
+pkgver=3.0.3
+pkgrel=1
+pkgdesc="A family of hash functions for strings"
+arch=('x86_64')
+url='https://github.com/google/cityhash'
+license=('LGPL2.1')
+depends=('glibc')
+source=(http://freefr.dl.sourceforge.net/project/${pkgname}/${pkgname}/${pkgname}-${pkgver}/${pkgname}-${pkgver}.tar.gz)
+sha256sums=('d9c0431cb803ceb9896ce74f683e6e5a0954e96ae1d9e4028d6e0f967bebd7e4')
+
+build() {
+	cd "${srcdir}/${pkgname}-${pkgver}"
+	./configure --prefix=/usr
+	make
+}
+
+package() {
+	cd "${srcdir}/${pkgname}-${pkgver}"
+	make DESTDIR="${pkgdir}" install
+}
