@@ -1,23 +1,25 @@
 # Maintainer: Christian Autermann <c.autermann@52north.org>
 pkgname=cityhash
 pkgver=1.1
-_sha=0469694b4609253742bcd3008c0b3f3ba9fcd9ba
+_sha="0469694b4609253742bcd3008c0b3f3ba9fcd9ba"
 pkgrel=1
 pkgdesc="A family of hash functions for strings"
-arch=('x86_64')
+arch=('i686' 'x86_64')
 url='https://github.com/google/cityhash'
 license=('MIT')
-source=(https://github.com/google/cityhash/archive/${_sha}.tar.gz)
-sha256sums=('3a02520cd3b206c57293be55998c09d1fc91bb8021d51381efcaabe6b07a5b8c')
+source=("${pkgname}-${pkgver}::git://github.com/google/cityhash.git#commit=${_sha}")
+sha256sums=('SKIP')
 
 build() {
-	cd "${srcdir}/${pkgname}-${_sha}"
+	cd "${srcdir}/${pkgname}-${pkgver}"
 	./configure --prefix=/usr --disable-static
 	make all check CXXFLAGS="-g -O3"
 }
 
 package() {
-	cd "${srcdir}/${pkgname}-${_sha}"
+	cd "${srcdir}/${pkgname}-${pkgver}"
 	make DESTDIR="${pkgdir}" install
+	install -dm755 "${pkgdir}/usr/share/licenses/${pkgname}"
+	install -m644 "COPYING" "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
 }
 
