@@ -1,0 +1,23 @@
+# Maintainer: Christian Autermann <christian@autermann.org>
+
+pkgname=dockviz
+pkgver=0.4.2
+pkgrel=1
+pkgdesc="Visualizing docker data"
+arch=('x86_64' 'i686')
+url="http://github.com/justone/$pkgname/"
+license=('Apache')
+makedepends=('go' 'git')
+options=('!strip' '!emptydirs')
+_gourl=github.com/justone/dockviz
+
+build() {
+  GOPATH="${srcdir}" go get -fix -v -x "${_gourl}"
+}
+
+package() {
+  mkdir -p "${pkgdir}/usr/bin"
+  install -p -m755 "${srcdir}/bin/"* "${pkgdir}/usr/bin"
+}
+
+# vim:set ts=2 sw=2 et:
