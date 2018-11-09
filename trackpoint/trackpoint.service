@@ -1,0 +1,9 @@
+[Unit]
+Description=Set TrackPoint properties
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/trackpoint -daemon --config /etc/trackpoint.yml
+
+[Install]
+WantedBy=multi-user.target

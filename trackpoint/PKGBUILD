@@ -1,0 +1,46 @@
+# Maintainer: Christian Autermann <christian@autermann.org>
+_pkgname=trackpoint
+pkgname=${_pkgname}-git
+pkgver=r13.0d3ab0d
+pkgrel=1
+pkgdesc="Trackpoint is a tool to control ThinkPad trackpoint settings"
+arch=(x86_64)
+url="https://github.com/autermann/trackpoint"
+license=('GPL2')
+makedepends=(go)
+options=('!strip')
+backup=(etc/trackpoint.yml)
+source=("${pkgname}::git+${url}.git"
+	    "${_pkgname}.service")
+sha256sums=('SKIP'
+            '7aebf522abb06219bddfffca6f7f66577087b30c387d16b0a260ddf18668a47c')
+
+pkgver() {
+  cd "$pkgname"
+  ( set -o pipefail
+    git describe --long 2>/dev/null | sed 's/\([^-]*-g\)/r\1/;s/-/./g' ||
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+  )
+}
+
+prepare() {
+	cd ${pkgname}
+	export GOPATH="$(pwd)/go"
+	go get github.com/cheekybits/genny
+	go get -d
+}
+
+build() {
+	cd ${pkgname}
+	export GOPATH="$(pwd)/go"
+	go generate
+	go build -o "${_pkgname}" 
+}
+
+package() {
+	install -Dm644 "${_pkgname}.service" "${pkgdir}/usr/lib/systemd/system/${_pkgname}.service"
+	cd "$pkgname"
+	install -Dm755 "${_pkgname}" "${pkgdir}/usr/bin/${_pkgname}"
+	install -Dm644 "${_pkgname}.yml" "${pkgdir}/etc/${_pkgname}.yml"
+	install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}
