@@ -1,0 +1,23 @@
+# Maintainer: Christian Autermann <christian@autermann.org>
+
+pkgname=xerox-workcentre-6655
+pkgver=5.451.0.0
+pkgrel=1
+pkgdesc="Xerox WorkCentre 6655 printer driver for CUPS"
+arch=('any')
+url="http://www.support.xerox.com/support/workcentre-6655/file-download/enus.html?operatingSystem=winxp&fileLanguage=en_GB&contentId=133733&from=downloads&viewArchived=false"
+license=('custom')
+makedepends=('unrar')
+sha256sums=('fb9e199aaf3b3a7315b1bf4f704b93f2a23b48965ccd718eebab5d9a10572e1f')
+source=("$pkgname.exe::http://download.support.xerox.com/pub/drivers/WC6655/drivers/win10/ar/WC6655_${pkgver}_PPD_en-US.exe")
+
+prepare() {
+  unrar x "$pkgname.exe" "xrx6655.ppd" | awk '/License=License Agreement/,/}/' | head -n -2 | tail -n +3 > LICENSE.txt
+
+}
+
+package() {
+
+  install -Dm644 "xrx6655.ppd" "${pkgdir}/usr/share/ppd/xerox/xrx6655.ppd"
+  install -Dm644 "LICENSE.txt" "$pkgdir/usr/share/licenses/xerox-workcentre-6655/LICENSE.txt"
+}
