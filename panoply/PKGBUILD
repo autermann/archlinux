@@ -1,0 +1,49 @@
+# Maintainer: MadPhysicist <jfoxrabinovitz at gmail dot com>
+pkgname=panoply
+pkgver=4.10.4
+pkgrel=1
+pkgdesc='NetCDF, HDF and GRIB Data Viewer by NASA GISS'
+arch=('any')
+url='http://www.giss.nasa.gov/tools/panoply/'
+license=('custom')
+groups=('nasa-tools')
+depends=('java-runtime>=8')
+makedepends=('unzip' 'imagemagick')
+conflicts=(panoply-nodesktop)
+_download="https://www.giss.nasa.gov/tools/panoply/download"
+source=("${_download}/PanoplyJ-${pkgver}.zip"
+        'panoply.license'
+        'panoply.sh.patch'
+        'panoply.desktop')
+sha256sums=('dabfc61d07478fa4af5c173b4ff8859800914fc6ec17b15a195ab872db981bd4'
+            '34bc89a180c403ecc1c94edb632742504e9ad4e427f8b0b284f85594d62b0055'
+            '73ab6543d11c5a00cb70953bcbd33a879b0ef343f4a834b9717f27ca42dda133'
+            'cbd1383ac108997669e2e3b295864222ac71dd34c56048ba321399beda265cd4')
+
+prepare() {
+    cd "${srcdir}/PanoplyJ"
+    patch -uN -i ../${pkgname}.sh.patch
+    unzip -p jars/Panoply.jar gov/nasa/giss/panoply/about/panoply4.png > ${pkgname}192.png
+    for size in 16 32 48 64 128; do
+        convert panoply192.png -resize ${size}x${size} ${pkgname}${size}.png
+    done
+}
+
+package() {
+
+    cd "${srcdir}"
+    install -Dm644 ${pkgname}.license "${pkgdir}/usr/share/licenses/${pkgname}/LICENSES"
+    install -Dm644 ${pkgname}.desktop "${pkgdir}/usr/share/applications/${pkgname}.desktop"
+
+    cd "${srcdir}/PanoplyJ"
+    
+    install -Dm644 README.txt "${pkgdir}/usr/share/doc/${pkgname}/README.txt"
+    install -Dm755 panoply.sh "${pkgdir}/usr/bin/${pkgname}"
+    install -d -m755 "${pkgdir}/usr/share/${pkgname}"
+    install -Dm644 jars/*.jar "${pkgdir}/usr/share/${pkgname}"
+	
+    for size in 16 32 48 64 128 192; do
+        install -Dm644 ${pkgname}${size}.png "${pkgdir}/usr/share/icons/hicolor/${size}x${size}/apps/${pkgname}.png"
+    done
+    
+}
