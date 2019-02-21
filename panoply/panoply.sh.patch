@@ -7,7 +7,7 @@
 -SCRIPT=`readlink -f $0`
 -SCRIPTDIR=`dirname $SCRIPT`
 +MAIN_CLASS='gov.nasa.giss.panoply.Panoply'
-+CLASSPATH='/usr/share/panoply/*.jar'
++CLASSPATH='/usr/share/panoply/*'
  
 -java -Xms512m -Xmx1600m -jar $SCRIPTDIR/jars/Panoply.jar "$@"
 +java -Xms512m -cp "${CLASSPATH}" "${MAIN_CLASS}" "$@"
