@@ -2,7 +2,7 @@
 _pkgname=trackpoint
 pkgname=${_pkgname}-git
 pkgver=r13.0d3ab0d
-pkgrel=1
+pkgrel=2
 pkgdesc="Trackpoint is a tool to control ThinkPad trackpoint settings"
 arch=(x86_64)
 url="https://github.com/autermann/trackpoint"
@@ -10,10 +10,13 @@ license=('GPL2')
 makedepends=(go)
 options=('!strip')
 backup=(etc/trackpoint.yml)
-source=("${pkgname}::git+${url}.git"
-	    "${_pkgname}.service")
+source=("${pkgname}::git+${url}.git" 
+        "${_pkgname}.service")
 sha256sums=('SKIP'
             '7aebf522abb06219bddfffca6f7f66577087b30c387d16b0a260ddf18668a47c')
+
+go_makedepends=('github.com/cheekybits/genny')
+go_generate=true
 
 pkgver() {
   cd "$pkgname"
@@ -24,23 +27,23 @@ pkgver() {
 }
 
 prepare() {
-	cd ${pkgname}
-	export GOPATH="$(pwd)/go"
-	go get github.com/cheekybits/genny
-	go get -d
+  export GOPATH="$(pwd)/go"
+  cd ${pkgname}
+  [ -n "${go_makedepends}" ] && go get ${go_makedepends[@]}
+  [ "${go_gnerate}" = true ] && go generate
+  go get -d
 }
 
 build() {
-	cd ${pkgname}
-	export GOPATH="$(pwd)/go"
-	go generate
-	go build -o "${_pkgname}" 
+  export GOPATH="$(pwd)/go"
+  cd ${pkgname}
+  go build -o "${_pkgname}" 
 }
 
 package() {
-	install -Dm644 "${_pkgname}.service" "${pkgdir}/usr/lib/systemd/system/${_pkgname}.service"
-	cd "$pkgname"
-	install -Dm755 "${_pkgname}" "${pkgdir}/usr/bin/${_pkgname}"
-	install -Dm644 "${_pkgname}.yml" "${pkgdir}/etc/${_pkgname}.yml"
-	install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+  install -Dm644 "${_pkgname}.service" "${pkgdir}/usr/lib/systemd/system/${_pkgname}.service"
+  cd ${pkgname}
+  install -Dm755 "${_pkgname}" "${pkgdir}/usr/bin/${_pkgname}"
+  install -Dm644 "${_pkgname}.yml" "${pkgdir}/etc/${_pkgname}.yml"
+  install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
 }
