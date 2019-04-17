@@ -1,0 +1,21 @@
+# Maintainer: Christian Autermann <christian@autermann.org>
+
+pkgname=xerox-altalink-c8000
+pkgver=5.643.0.0
+pkgrel=1
+pkgdesc="Xerox AltaLink C8000 series printer driver for CUPS"
+arch=('any')
+url='https://www.support.xerox.com/support/altalink-c8000-series/file-download/dede.html?operatingSystem=win10&fileLanguage=en_GB&&associatedProduct=C8000-series-built-in-controller&contentId=143178&from=downloads&viewArchived=false'
+license=('custom')
+makedepends=(unrar)
+source=("$pkgname.exe::http://download.support.xerox.com/pub/drivers/ALC80XX/drivers/win10/ar/AltaLink_C8030-C8070_${pkgver}_PPD_English.exe")
+
+prepare() {
+  unrar x -y "$pkgname.exe" '*.ppd' | awk  '/License=License Agreement/,/}/' | head -n -3 | tail -n +3 > LICENSE.txt
+}
+
+package() {
+  install -Dm644 *.ppd -t "${pkgdir}/usr/share/ppd/xerox"
+  install -Dm644 "LICENSE.txt" "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE.txt"
+}
+sha256sums=('3632b9140e2702bd8fe9e1bb2f10040f019af2a07de1f1137531d9f01015f37a')
