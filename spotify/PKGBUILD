@@ -6,11 +6,12 @@ _ver_x86_64=16
 pkgrel=2
 pkgdesc='A proprietary music streaming service'
 arch=('x86_64')
+_sarch='amd64'
 license=('custom')
 url='https://www.spotify.com'
-depends=('alsa-lib>=1.0.14' 
+depends=('alsa-lib>=1.0.14'
          'libatomic_ops'
-         'libcurl-gnutls' 
+         'libcurl-gnutls'
          'gconf'
          'rtmpdump'
          'libsystemd'
@@ -22,8 +23,6 @@ depends=('alsa-lib>=1.0.14'
          'libxtst'
          'xdg-utils'
          'desktop-file-utils')
-depends_x86_64=('libcurl-gnutls')
-depends_i686=('libcurl-compat')
 optdepends=('ffmpeg-compat-57: Adds support for playback of local files'
             'zenity: Adds support for importing local files'
             'libnotify: Desktop notifications')
@@ -33,46 +32,36 @@ source=('spotify.protocol'
         'LICENSE' # https://www.spotify.com/legal/end-user-agreement
         "${pkgname}-${pkgver}.release::http://repository.spotify.com/dists/stable/Release"
         "${pkgname}-${pkgver}.release.sig::http://repository.spotify.com/dists/stable/Release.gpg"
-        "${pkgname}-${pkgver}.packages::http://repository.spotify.com/dists/stable/non-free/binary-amd64/Packages"
-        "${pkgname}-${pkgver}.deb::https://repository-origin.spotify.com/pool/non-free/s/spotify-client/spotify-client_${pkgver}.${_commit}-${_ver_x86_64}_amd64.deb")
+        "${pkgname}-${pkgver}.packages::http://repository.spotify.com/dists/stable/non-free/binary-${_sarch}/Packages"
+        "${pkgname}-${pkgver}.deb::https://repository-origin.spotify.com/pool/non-free/s/spotify-client/spotify-client_${pkgver}.${_commit}-${_ver_x86_64}_${_sarch}.deb")
 
-# Spotify uses different names for the arch
-if [ "${CARCH}" = "i686" ]; then
-    _SPOTIFY_ARCH=i386
-else
-    _SPOTIFY_ARCH=amd64
-fi
+
 
 prepare() {
-    echo "$(grep non-free/binary-${_SPOTIFY_ARCH}/Packages ${pkgname}-${pkgver}.release | tail -n 2 | head -n 1 | awk '{print $1}') ${pkgname}-${pkgver}.packages" \
-        | sha256sum -c -
-
-    echo "$(grep SHA512 ${pkgname}-${pkgver}.packages | head -n 1 | awk '{print $2}') ${pkgname}-${pkgver}.deb" \
-        | sha512sum -c -
+  cd "${srcdir}"
+  SHA256=$(awk "/[0-9a-f]{64} [0-9]+ non-free\/binary-${_sarch}\/Packages$/{print \$1}" "${pkgname}-${pkgver}.release")
+  SHA512=$(awk '/^SHA512/{print $2;exit}' "${pkgname}-${pkgver}.packages")    
+  sha256sum -c <<<"${SHA256} ${pkgname}-${pkgver}.packages"
+  sha512sum -c <<<"${SHA512} ${pkgname}-${pkgver}.deb"
 }
 
 package() {
-    cd "${srcdir}"
-
-    tar -xzf data.tar.gz -C "${pkgdir}"
-    
-    install -Dm644 "${pkgdir}/usr/share/spotify/spotify.desktop" \
-                   "${pkgdir}/usr/share/applications/spotify.desktop"
-    install -Dm644 "${pkgdir}/usr/share/spotify/icons/spotify-linux-512.png" \
-                   "${pkgdir}/usr/share/pixmaps/spotify-client.png"
-    install -Dm644 "${srcdir}/spotify.protocol" \
-                   "${pkgdir}/usr/share/kservices5/spotify.protocol"
-    install -Dm644 "${srcdir}/LICENSE" \
-                   "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
-
-    for size in 22 24 32 48 64 128 256 512; do
-        install -Dm644 "${pkgdir}/usr/share/spotify/icons/spotify-linux-${size}.png" \
-                       "${pkgdir}/usr/share/icons/hicolor/${size}x${size}/apps/spotify.png"
-    done
-
-    # Fix permissions
-    chmod -R go-w "${pkgdir}"
+  cd "${srcdir}"
+  tar -xzf data.tar.gz -C "${pkgdir}"
+  install -Dm644 "${pkgdir}/usr/share/spotify/spotify.desktop" \
+                 "${pkgdir}/usr/share/applications/spotify.desktop"
+  install -Dm644 "${pkgdir}/usr/share/spotify/icons/spotify-linux-512.png" \
+                 "${pkgdir}/usr/share/pixmaps/spotify-client.png"
+  install -Dm644 "${srcdir}/spotify.protocol" \
+                 "${pkgdir}/usr/share/kservices5/spotify.protocol"
+  install -Dm644 "${srcdir}/LICENSE" \
+                 "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+  for size in 22 24 32 48 64 128 256 512; do
+    install -Dm644 "${pkgdir}/usr/share/spotify/icons/spotify-linux-${size}.png" \
+                   "${pkgdir}/usr/share/icons/hicolor/${size}x${size}/apps/spotify.png"
+  done
 }
+
 sha512sums=('999abe46766a4101e27477f5c9f69394a4bb5c097e2e048ec2c6cb93dfa1743eb436bde3768af6ba1b90eaac78ea8589d82e621f9cbe7d9ab3f41acee6e8ca20'
             '2e16f7c7b09e9ecefaa11ab38eb7a792c62ae6f33d95ab1ff46d68995316324d8c5287b0d9ce142d1cf15158e61f594e930260abb8155467af8bc25779960615'
             '037266fe6f78a06cf92c7564379dbde1a32624014ad630567860267568dddc7bc4caa5e88888f19a4aa089b154e88938965984baa7491d87554cd688a90eddef'
