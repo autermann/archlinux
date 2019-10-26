@@ -1,0 +1,36 @@
+# Maintainer: Christian Autermann <christian@autermann.org>
+_pkgname=retroarch-joypad-autoconfig
+pkgname=${_pkgname}-git
+pkgver=r1640.723e984
+pkgrel=2
+pkgdesc="RetroArch Joypad autoconfigure files"
+arch=(x86_64)
+url="https://github.com/libretro/${_pkgname}"
+license=('MIT')
+makedepends=()
+options=('!strip')
+backup=()
+source=("${pkgname}::git+${url}.git")
+sha256sums=('SKIP')
+
+_driver=(udev linuxraw parport sdl2 hid dinput x xinput)
+
+pkgver() {
+  cd "$pkgname"
+  ( set -o pipefail
+    git describe --long 2>/dev/null | sed 's/\([^-]*-g\)/r\1/;s/-/./g' ||
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+  )
+}
+
+build() {
+	true
+}
+
+package() {
+  cd ${pkgname}
+  mkdir -p "${pkgdir}/usr/lib/retroarch/joypad-autoconfig"
+  for driver in "${_driver[@]}"; do
+	cp -r "${driver}" "${pkgdir}/usr/lib/retroarch/joypad-autoconfig"
+  done
+}
