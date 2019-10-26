@@ -1,6 +1,6 @@
 # Maintainer: Christian Autermann <christian@autermann.org>
 pkgname=retroarch-joypad-autoconfig-xbox-one-wireless
-pkgver=1.0
+pkgver=1.1
 pkgrel=1
 pkgdesc="RetroArch Joypad autoconfigure files for XBox One Wireless controller"
 arch=(x86_64)
@@ -10,7 +10,7 @@ makedepends=()
 options=('!strip')
 backup=()
 source=("config.cfg")
-sha256sums=('5bd5ca6923beff7c006f85a5dd623b480dfbdf8be16d672f2a080ec3c245a73d')
+sha256sums=('c6e9319f4131ecef69c08683a63dcf509cce75c3603a37f0d953b4cc70472621')
 
 _driver=(udev linuxraw parport sdl2 hid dinput x xinput)
 
